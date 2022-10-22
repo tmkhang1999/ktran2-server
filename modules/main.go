@@ -6,11 +6,12 @@ import (
 	"log"
 	"main.go/utils"
 	"net/http"
+	"strconv"
 )
 
 func main() {
 	// Load variables
-	_, err := utils.LoadConfig("./", "config.yaml")
+	config, err := utils.LoadConfig("./", "config.yaml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -25,8 +26,12 @@ func main() {
 	r.HandleFunc("/ktran2/status", user.StatusHandler).Methods("GET")
 
 	// Running
-	err = http.ListenAndServe(":4000", r)
-	if err != nil {
-		return
+	log.Println("checking")
+	srv := http.Server{
+		Handler: r,
+		Addr:    ":" + strconv.Itoa(config.Port),
+	}
+	if err := srv.ListenAndServe(); err != nil {
+		log.Fatal("ListenAndServe: ", err)
 	}
 }

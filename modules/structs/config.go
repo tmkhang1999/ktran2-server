@@ -10,6 +10,7 @@ type Config struct {
 
 	TableName string `yaml:"TABLENAME"`
 	Region    string `yaml:"REGION"`
+	Port      int    `yaml:"PORT"`
 
 	AccessKey string
 }
