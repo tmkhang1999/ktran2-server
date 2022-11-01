@@ -3,6 +3,7 @@ module main.go
 go 1.19
 
 require (
+	github.com/aws/aws-sdk-go v1.44.126
 	github.com/gorilla/mux v1.8.0
 	github.com/jamespearly/loggly v0.0.0-20220929110912-1d839b0715fa
 	github.com/joho/godotenv v1.4.0
@@ -13,6 +14,7 @@ require (
 	github.com/TwiN/go-color v1.2.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect

@@ -18,7 +18,9 @@ func main() {
 
 	// Instantiate the user variable including the loggly client
 	user := utils.User{
-		LogglyClient: loggly.New("Weather-App"),
+		LogglyClient:   loggly.New("Weather-App"),
+		DynamoDBClient: utils.CreateDynamoDBClient(config.Region),
+		Config:         config,
 	}
 
 	// Set up mux router
@@ -26,7 +28,6 @@ func main() {
 	r.HandleFunc("/ktran2/status", user.StatusHandler).Methods("GET")
 
 	// Running
-	log.Println("checking")
 	srv := http.Server{
 		Handler: r,
 		Addr:    ":" + strconv.Itoa(config.Port),

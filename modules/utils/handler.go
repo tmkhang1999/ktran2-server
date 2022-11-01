@@ -2,14 +2,16 @@ package utils
 
 import (
 	"encoding/json"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/jamespearly/loggly"
 	"main.go/structs"
 	"net/http"
-	"time"
 )
 
 type User struct {
-	LogglyClient *loggly.ClientType
+	LogglyClient   *loggly.ClientType
+	DynamoDBClient *dynamodb.DynamoDB
+	Config         structs.Config
 }
 
 func (user *User) StatusHandler(w http.ResponseWriter, req *http.Request) {
@@ -30,13 +32,10 @@ func (user *User) StatusHandler(w http.ResponseWriter, req *http.Request) {
 
 	// Create an HTTP response
 	w.Header().Set("Content-Type", "application/json")
-	resp := structs.Response{
-		SystemTime: time.Now(),
-		Status:     http.StatusOK,
-	}
+	httpStatusMessage := GetStatus(user.DynamoDBClient, user.Config.TableName)
 
 	// Marshal the HTTP response struct
-	jsonResp, httpErr := json.Marshal(resp)
+	jsonResp, httpErr := json.Marshal(httpStatusMessage)
 	HandleException(httpErr, user.LogglyClient, "Successfully marshal the http response")
 
 	// Send the response to client
