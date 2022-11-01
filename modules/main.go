@@ -27,13 +27,8 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/ktran2/status", user.StatusHandler).Methods("GET")
 	r.HandleFunc("/ktran2/all", user.AllHandler).Methods("GET")
+	r.HandleFunc("/ktran2/search", user.SearchHandler).Methods("GET")
 
 	// Running
-	srv := http.Server{
-		Handler: r,
-		Addr:    ":" + strconv.Itoa(config.Port),
-	}
-	if err := srv.ListenAndServe(); err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
+	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(config.Port), r))
 }
