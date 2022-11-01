@@ -26,6 +26,7 @@ func main() {
 	// Set up mux router
 	r := mux.NewRouter()
 	r.HandleFunc("/ktran2/status", user.StatusHandler).Methods("GET")
+	r.HandleFunc("/ktran2/all", user.AllHandler).Methods("GET")
 
 	// Running
 	srv := http.Server{

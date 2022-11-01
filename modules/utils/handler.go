@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/jamespearly/loggly"
+	"log"
 	"main.go/structs"
 	"net/http"
 )
@@ -14,7 +15,7 @@ type User struct {
 	Config         structs.Config
 }
 
-func (user *User) StatusHandler(w http.ResponseWriter, req *http.Request) {
+func updateRequestRecord(req *http.Request, logglyClient *loggly.ClientType) {
 	// Create a message to send to Loggly
 	LogglyMessage := structs.LogglyMessage{
 		StatusCode:  http.StatusOK,
@@ -25,13 +26,26 @@ func (user *User) StatusHandler(w http.ResponseWriter, req *http.Request) {
 
 	// Marshal the message struct
 	message, marshalErr := json.Marshal(LogglyMessage)
-	HandleException(marshalErr, user.LogglyClient, "Successfully marshal the loggly message")
+	if marshalErr != nil {
+		log.Fatalln(marshalErr)
+	}
 
 	// Send the message to loggly
-	SendingLoggy(user.LogglyClient, "info", string(message))
+	SendingLoggy(logglyClient, "info", string(message))
 
-	// Create an HTTP response
+}
+
+func sendHTTPResponse(w http.ResponseWriter, logglyClient *loggly.ClientType, jsonResp []byte) {
 	w.Header().Set("Content-Type", "application/json")
+	_, writeErr := w.Write(jsonResp)
+	HandleException(writeErr, logglyClient, "Successfully send the http response")
+}
+
+func (user *User) StatusHandler(w http.ResponseWriter, req *http.Request) {
+	// Send a record of request to Loggly
+	updateRequestRecord(req, user.LogglyClient)
+
+	// Create the HTTP 'status' response
 	httpStatusMessage := GetStatus(user.DynamoDBClient, user.Config.TableName)
 
 	// Marshal the HTTP response struct
@@ -39,6 +53,20 @@ func (user *User) StatusHandler(w http.ResponseWriter, req *http.Request) {
 	HandleException(httpErr, user.LogglyClient, "Successfully marshal the http response")
 
 	// Send the response to client
-	_, writeErr := w.Write(jsonResp)
-	HandleException(writeErr, user.LogglyClient, "Successfully send the http response")
+	sendHTTPResponse(w, user.LogglyClient, jsonResp)
+}
+
+func (user *User) AllHandler(w http.ResponseWriter, req *http.Request) {
+	// Send a record of request to Loggly
+	updateRequestRecord(req, user.LogglyClient)
+
+	// Create an HTTP 'all' response
+	httpAllMessage := GetAll(user.DynamoDBClient, user.Config.TableName)
+
+	// Marshal the HTTP response struct
+	jsonResp, httpErr := json.Marshal(httpAllMessage)
+	HandleException(httpErr, user.LogglyClient, "Successfully marshal the http response")
+
+	// Send the response to client
+	sendHTTPResponse(w, user.LogglyClient, jsonResp)
 }
