@@ -4,4 +4,4 @@ QUERY: "Oswego"
 TIME: 3
 TABLENAME: "ktran2_weather_v1"
 REGION: "us-east-1"
-PORT: 32706
+PORT: 8080
