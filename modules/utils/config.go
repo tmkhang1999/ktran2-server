@@ -1,19 +1,17 @@
 package utils
 
 import (
-	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
-	"log"
 	"main.go/structs"
 	"strings"
 )
 
-func init() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-}
+//func init() {
+//	err := godotenv.Load(".env")
+//	if err != nil {
+//		log.Fatal("Error loading .env file")
+//	}
+//}
 
 func LoadConfig(path string, fileName string) (config structs.Config, err error) {
 	// Load config file formatted in .yaml
