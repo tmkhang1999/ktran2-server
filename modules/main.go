@@ -19,7 +19,7 @@ func main() {
 	// Instantiate the user variable including the loggly client
 	user := utils.User{
 		LogglyClient:   loggly.New("Weather-App"),
-		DynamoDBClient: utils.CreateDynamoDBClient(config.Region),
+		DynamoDBClient: utils.CreateDynamoDBClient(),
 		Config:         config,
 	}
 

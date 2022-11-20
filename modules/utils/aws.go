@@ -9,16 +9,12 @@ import (
 	"main.go/structs"
 )
 
-func CreateDynamoDBClient(region string) *dynamodb.DynamoDB {
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(region)},
-	)
-	if err != nil {
-		log.Fatalf("Got error initializing AWS: %s", err)
-	}
-	svc := dynamodb.New(sess)
+func CreateDynamoDBClient() *dynamodb.DynamoDB {
+	sess := session.Must(session.NewSessionWithOptions(session.Options{
+		SharedConfigState: session.SharedConfigEnable,
+	}))
 
-	return svc
+	return dynamodb.New(sess)
 }
 
 func GetStatus(svc *dynamodb.DynamoDB, tableName string) structs.HttpStatusMessage {
